@@ -11,21 +11,18 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.common.registry.GameData;
-
-import org.apache.logging.log4j.Level;
-
-import vapourdrive.genloader.api.GenLoaderAPI;
 import vapourdrive.genloader.api.utils.BlockUtils;
 
-public class ClearBlockCommand implements ICommand
+public class CountBlockCommand implements ICommand
 {
+	public String[] minecraftOres = {"minecraft:coal_ore", "minecraft:iron_ore", "minecraft:gold_ore", "minecraft:redstone_ore", "minecraft:emerald_ore", "minecraft:lapis_ore", "minecraft:diamond_ore"};
 	@Override
 	public int compareTo(ICommand o)
 	{
@@ -35,13 +32,13 @@ public class ClearBlockCommand implements ICommand
 	@Override
 	public String getCommandName()
 	{
-		return "GL_ClearBlock";
+		return "GL_CountBlocks";
 	}
 
 	@Override
 	public String getCommandUsage(ICommandSender sender)
 	{
-		return "Gl_ClearBlocks <text>";
+		return "GL_CountBlocks <text>";
 	}
 
 	@Override
@@ -64,57 +61,51 @@ public class ClearBlockCommand implements ICommand
 		int CXmax = CommandBase.parseInt(args[1]);
 		int CZmin = CommandBase.parseInt(args[2]);
 		int CZmax = CommandBase.parseInt(args[3]);
-		
-		if((CXmax - CXmin) * (CZmax - CZmin) > 25)
+
+		if ((CXmax - CXmin) * (CZmax - CZmin) > 25)
 		{
 			sender.addChatMessage(new ChatComponentTranslation("genloader.areatoolarge"));
 			return;
 		}
 
-		String toRemove = args[4];
+		String toCount = args[4];
 		Block block = null;
 		IBlockState state = null;
-		ArrayList<Block> junkArray = new ArrayList<Block>();
-
-		boolean haveJunk = false;
-
-		if (!toRemove.contentEquals("junk"))
+		
+		if(toCount.contentEquals("ores"))
 		{
-			if (args.length == 5)
+			for(int i = 0; i < minecraftOres.length; i++)
 			{
-				block = GameData.getBlockRegistry().getObject(new ResourceLocation(toRemove));
+				block = GameData.getBlockRegistry().getObject(new ResourceLocation(minecraftOres[i]));
+				int Count = countObjects(CXmin, CXmax, CZmin, CZmax, sender, block, block.getDefaultState());
+				sender.addChatMessage(new ChatComponentText(" " + block.getDefaultState().toString() + " " + String.valueOf(Count)));
 			}
-			HashMap<String, String> properties = new HashMap<String, String>();
-			for (int i = 5; i < args.length; i = i + 2)
-			{
-				if (args[i] != null && args[i + 1] != null)
-				{
-					properties.put(args[i], args[i + 1]);
-				}
-			}
-
-			state = BlockUtils.createState(toRemove, properties);
-		}
-		if (toRemove.contentEquals("junk"))
-		{
-			haveJunk = true;
-			GenLoaderAPI.log.log(Level.INFO, "Preparing to remove junk");
-			junkArray.add(Blocks.stone);
-			junkArray.add(Blocks.dirt);
-			junkArray.add(Blocks.gravel);
-			junkArray.add(Blocks.grass);
-			junkArray.add(Blocks.cobblestone);
-			junkArray.add(Blocks.lava);
-			junkArray.add(Blocks.water);
-			junkArray.add(Blocks.flowing_lava);
-			junkArray.add(Blocks.flowing_water);
-			junkArray.add(Blocks.sandstone);
-			junkArray.add(Blocks.log);
-			junkArray.add(Blocks.log2);
-			junkArray.add(Blocks.leaves);
-			junkArray.add(Blocks.leaves2);
+			return;
 		}
 
+		if (args.length == 5)
+		{
+			block = GameData.getBlockRegistry().getObject(new ResourceLocation(toCount));
+		}
+		
+		HashMap<String, String> properties = new HashMap<String, String>();
+		for (int i = 5; i < args.length; i = i + 2)
+		{
+			if (args[i] != null && args[i + 1] != null)
+			{
+				properties.put(args[i], args[i + 1]);
+			}
+		}
+
+		state = BlockUtils.createState(toCount, properties);
+
+		int Count = countObjects(CXmin, CXmax, CZmin, CZmax, sender, block, state);
+		sender.addChatMessage(new ChatComponentText(" " + state.toString() + " " + String.valueOf(Count)));
+	}
+	
+	public int countObjects(int CXmin, int CXmax, int CZmin, int CZmax, ICommandSender sender, Block block, IBlockState state)
+	{
+		int Count = 0;
 		for (int i = CXmin; i <= CXmax; i++)
 		{
 			for (int j = CZmin; j <= CZmax; j++)
@@ -127,24 +118,20 @@ public class ClearBlockCommand implements ICommand
 						int maxheight = world.getChunkFromBlockCoords(new BlockPos(k, 0, l)).getTopFilledSegment() + 16;
 						for (int m = 0; m < maxheight; m++)
 						{
-							if (haveJunk && junkArray.contains(world.getBlockState(new BlockPos(k, m, l)).getBlock()))
-							{
-								world.setBlockToAir(new BlockPos(k, m, l));
-							}
 							if (block != null && world.getBlockState(new BlockPos(k, m, l)).getBlock() == block)
 							{
-								world.setBlockToAir(new BlockPos(k, m, l));
+								Count++;
 							}
-							if (world.getBlockState(new BlockPos(k, m, l)) == state)
+							else if (world.getBlockState(new BlockPos(k, m, l)) == state)
 							{
-								world.setBlockToAir(new BlockPos(k, m, l));
+								Count++;
 							}
 						}
 					}
 				}
 			}
 		}
-
+		return Count;
 	}
 
 	@Override
@@ -167,7 +154,7 @@ public class ClearBlockCommand implements ICommand
 		Chunk chunk = sender.getEntityWorld().getChunkFromBlockCoords(sender.getPosition());
 		ArrayList<String> argsList = new ArrayList<String>();
 		argsList.add(String.valueOf(chunk.xPosition - 2) + " " + String.valueOf(chunk.xPosition + 2) + " "
-				+ String.valueOf(chunk.zPosition - 2) + " " + String.valueOf(chunk.zPosition + 2) + " junk");
+				+ String.valueOf(chunk.zPosition - 2) + " " + String.valueOf(chunk.zPosition + 2));
 
 		return argsList;
 	}

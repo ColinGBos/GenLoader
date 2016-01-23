@@ -3,3 +3,4 @@
 //Phrases
 genloader.notenoughargs=Not enough arguments for command
 genloader.areatoolarge=Set area is too large
+genloader.numberof=Number of

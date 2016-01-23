@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Level;
 
 import vapourdrive.genloader.api.GenLoaderAPI;
 import vapourdrive.genloader.commands.ClearBlockCommand;
+import vapourdrive.genloader.commands.CountBlockCommand;
 import vapourdrive.genloader.config.ConfigManager;
 import vapourdrive.genloader.events.EventManager;
 import vapourdrive.genloader.utils.BlockDump;
@@ -50,6 +51,7 @@ public class CommonProxy
 	public void serverLoad(FMLServerStartingEvent event)
 	{
 		event.registerServerCommand(new ClearBlockCommand());
+		event.registerServerCommand(new CountBlockCommand());
 		
 	}
 

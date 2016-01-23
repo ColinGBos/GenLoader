@@ -38,12 +38,21 @@ public class GL_WorldGenerator implements IWorldGenerator
 				if (noSetBiomeFilter(generation)
 						|| isBiomeValid(world, chunkX, chunkZ, generation.getBiomeTypes(), generation.getBiomeIDs()))
 				{
-					if (generation.getGeneratorType() == EnumGenerationType.WEIGHTEDSTANDARDCLUSTER)
+					IBlockState toReplace = generation.getBlockToReplace();
+
+					if (generation.getGeneratorType() == EnumGenerationType.STANDARDVARIABLECLUSTER)
 					{
-						IBlockState toReplace = generation.getBlockToReplace();
 						WeightedWorldGenMinable generator = new WeightedWorldGenMinable(generation.getWeightedBlocks(),
 								generation.getSize(), new IBlockStateHelper(toReplace));
 						generateStandardOre(random, chunkX, chunkZ, world, generation.getFrequency(), generator, generation.getMinY(),
+								generation.getMaxY());
+					}
+					
+					else if (generation.getGeneratorType() == EnumGenerationType.WEIGHTEDVARIABLECLUSTER)
+					{
+						WeightedWorldGenMinable generator = new WeightedWorldGenMinable(generation.getWeightedBlocks(),
+								generation.getSize(), new IBlockStateHelper(toReplace));
+						generateWeightedOre(random, chunkX, chunkZ, world, generation.getFrequency(), generator, generation.getMinY(),
 								generation.getMaxY());
 					}
 				}
@@ -86,6 +95,22 @@ public class GL_WorldGenerator implements IWorldGenerator
 		{
 			int x = chunkX * 16 + rand.nextInt(16);
 			int y = rand.nextInt(maxY - minY) + minY;
+			int z = chunkZ * 16 + rand.nextInt(16);
+
+			gen.generate(world, rand, new BlockPos(x, y, z));
+		}
+	}
+	
+	private void generateWeightedOre(Random rand, int chunkX, int chunkZ, World world, int iterations, WorldGenerator gen, int minY,
+			int maxY)
+	{
+		int centerHeight = (maxY + minY)/2;
+		int spread = (maxY - centerHeight);
+		
+		for (int i = 0; i < iterations; i++)
+		{
+			int x = chunkX * 16 + rand.nextInt(16);
+			int y = rand.nextInt(spread) - rand.nextInt(spread) + centerHeight;
 			int z = chunkZ * 16 + rand.nextInt(16);
 
 			gen.generate(world, rand, new BlockPos(x, y, z));

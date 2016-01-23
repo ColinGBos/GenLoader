@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import scala.actors.threadpool.Arrays;
+import vapourdrive.genloader.api.generation.EnumGenerationPriority;
 import vapourdrive.genloader.api.generation.EnumGenerationType;
 import vapourdrive.genloader.api.generation.Generation;
 import vapourdrive.genloader.api.serializeable.ParsableBlockState;
@@ -40,10 +41,10 @@ public class GenLoaderAPI
 	 * @param weightedBlockStates an array of weighted blocks, determines the blocks weight for it's occurrence in the generation
 	 * @param toReplace simply an object that contains a IBlockState that I have set up to parce nicely, block which can get replaced on generation
 	 */
-	public static void addGeneration(String category, EnumGenerationType genType, int frequency, int minY, int maxY, int size,
+	public static void addGeneration(String category, EnumGenerationPriority genPriority, EnumGenerationType genType, int frequency, int minY, int maxY, int size,
 			ArrayList<Integer> dimensionIDs, ArrayList<Type> biomeTypes, ArrayList<Integer> biomeIDs, WeightedBlockState[] weightedBlockStates, ParsableBlockState toReplace)
 	{
-		generators.add(new Generation(category, genType, frequency, minY, maxY, size, dimensionIDs, biomeTypes, biomeIDs, weightedBlockStates, toReplace));
+		generators.add(new Generation(category, genPriority, genType, frequency, minY, maxY, size, dimensionIDs, biomeTypes, biomeIDs, weightedBlockStates, toReplace));
 	}
 	
 	/**
@@ -65,10 +66,10 @@ public class GenLoaderAPI
 	 * @param biomeIDs an arraylist of valid biome IDs, checked after Type
 	 * @param weightedBlockStates an array of weighted blocks, determines the blocks weight for it's occurrence in the generation
 	 */
-	public static void addGeneration(String category, EnumGenerationType genType, int frequency, int minY, int maxY, int size,
+	public static void addGeneration(String category, EnumGenerationPriority genPriority, EnumGenerationType genType, int frequency, int minY, int maxY, int size,
 			ArrayList<Integer> dimensionIDs, ArrayList<Type> biomeTypes, ArrayList<Integer> biomeIDs, WeightedBlockState[] weightedBlockStates)
 	{
-		generators.add(new Generation(category, genType, frequency, minY, maxY, size, dimensionIDs, biomeTypes, biomeIDs, weightedBlockStates, new ParsableBlockState(Blocks.stone.getDefaultState())));
+		generators.add(new Generation(category, genPriority, genType, frequency, minY, maxY, size, dimensionIDs, biomeTypes, biomeIDs, weightedBlockStates, new ParsableBlockState(Blocks.stone.getDefaultState())));
 	}
 	
 	/**
@@ -86,7 +87,7 @@ public class GenLoaderAPI
 	 */
 	public static void addGeneration(String category, EnumGenerationType genType, int frequency, int minY, int maxY, int size, WeightedBlockState[] weightedBlockStates)
 	{
-		generators.add(new Generation(category, genType, frequency, minY, maxY, size, new ArrayList<Integer>(Arrays.asList(new Integer[]{0})), null, null, weightedBlockStates, new ParsableBlockState(Blocks.stone.getDefaultState())));
+		generators.add(new Generation(category, EnumGenerationPriority.LATER, genType, frequency, minY, maxY, size, new ArrayList<Integer>(Arrays.asList(new Integer[]{0})), null, null, weightedBlockStates, new ParsableBlockState(Blocks.stone.getDefaultState())));
 	}
 	
 	public static ArrayList<Generation> getGeneratorList()
