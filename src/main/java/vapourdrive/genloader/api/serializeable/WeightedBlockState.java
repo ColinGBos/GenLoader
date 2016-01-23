@@ -1,4 +1,4 @@
-package vapourdrive.genloader.api;
+package vapourdrive.genloader.api.serializeable;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,15 +9,11 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraftforge.fml.common.registry.GameData;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.annotations.SerializedName;
 
 public class WeightedBlockState
 {
-	@SerializedName("Weight")
 	private final int weight;
-	@SerializedName("Block")
 	private final String block;
-	@SerializedName("Properties")
 	private final HashMap<String, String> properties;
 	private final IBlockState state;
 	

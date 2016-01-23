@@ -3,7 +3,8 @@ package vapourdrive.genloader.utils;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 
-import vapourdrive.genloader.api.WeightedBlockState;
+import vapourdrive.genloader.api.serializeable.WeightedBlockState;
+import vapourdrive.genloader.api.utils.BlockUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

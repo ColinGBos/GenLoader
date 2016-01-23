@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.logging.log4j.Level;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.CommandBase;
@@ -18,9 +16,13 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.common.registry.GameData;
-import vapourdrive.genloader.GenLoader;
-import vapourdrive.genloader.utils.BlockUtils;
+
+import org.apache.logging.log4j.Level;
+
+import vapourdrive.genloader.api.GenLoaderAPI;
+import vapourdrive.genloader.api.utils.BlockUtils;
 
 public class ClearBlockCommand implements ICommand
 {
@@ -56,19 +58,26 @@ public class ClearBlockCommand implements ICommand
 		if (args.length < 5)
 		{
 			sender.addChatMessage(new ChatComponentTranslation("genloader.notenoughargs"));
+			return;
 		}
 		int CXmin = CommandBase.parseInt(args[0]);
 		int CXmax = CommandBase.parseInt(args[1]);
 		int CZmin = CommandBase.parseInt(args[2]);
 		int CZmax = CommandBase.parseInt(args[3]);
+		
+		if((CXmax - CXmin) * (CZmax - CZmin) > 25)
+		{
+			sender.addChatMessage(new ChatComponentTranslation("genloader.areatoolarge"));
+			return;
+		}
 
 		String toRemove = args[4];
 		Block block = null;
 		IBlockState state = null;
 		ArrayList<Block> junkArray = new ArrayList<Block>();
-		
+
 		boolean haveJunk = false;
-		
+
 		if (!toRemove.contentEquals("junk"))
 		{
 			if (args.length == 5)
@@ -86,10 +95,10 @@ public class ClearBlockCommand implements ICommand
 
 			state = BlockUtils.createState(toRemove, properties);
 		}
-		if(toRemove.contentEquals("junk"))
+		if (toRemove.contentEquals("junk"))
 		{
 			haveJunk = true;
-			GenLoader.log.log(Level.INFO, "Preparing to remove junk");
+			GenLoaderAPI.log.log(Level.INFO, "Preparing to remove junk");
 			junkArray.add(Blocks.stone);
 			junkArray.add(Blocks.dirt);
 			junkArray.add(Blocks.gravel);
@@ -105,7 +114,7 @@ public class ClearBlockCommand implements ICommand
 			junkArray.add(Blocks.leaves);
 			junkArray.add(Blocks.leaves2);
 		}
-		
+
 		for (int i = CXmin; i <= CXmax; i++)
 		{
 			for (int j = CZmin; j <= CZmax; j++)
@@ -115,10 +124,10 @@ public class ClearBlockCommand implements ICommand
 				{
 					for (int l = j * 16; l < (j * 16) + 16; l++)
 					{
-						int maxheight = world.getTopSolidOrLiquidBlock(new BlockPos(k, 0, l)).getY();
+						int maxheight = world.getChunkFromBlockCoords(new BlockPos(k, 0, l)).getTopFilledSegment() + 16;
 						for (int m = 0; m < maxheight; m++)
 						{
-							if(haveJunk && junkArray.contains(world.getBlockState(new BlockPos(k, m, l)).getBlock()))
+							if (haveJunk && junkArray.contains(world.getBlockState(new BlockPos(k, m, l)).getBlock()))
 							{
 								world.setBlockToAir(new BlockPos(k, m, l));
 							}
@@ -155,7 +164,12 @@ public class ClearBlockCommand implements ICommand
 	@Override
 	public List<String> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos)
 	{
-		return null;
+		Chunk chunk = sender.getEntityWorld().getChunkFromBlockCoords(sender.getPosition());
+		ArrayList<String> argsList = new ArrayList<String>();
+		argsList.add(String.valueOf(chunk.xPosition - 2) + " " + String.valueOf(chunk.xPosition + 2) + " "
+				+ String.valueOf(chunk.zPosition - 2) + " " + String.valueOf(chunk.zPosition + 2) + " junk");
+
+		return argsList;
 	}
 
 	@Override

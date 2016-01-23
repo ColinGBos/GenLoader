@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.registry.GameData;
 
 import org.apache.logging.log4j.Level;
 
-import vapourdrive.genloader.GenLoader;
+import vapourdrive.genloader.api.GenLoaderAPI;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
@@ -60,7 +60,7 @@ public class BlockDump
 				File blockDump = new File(configPath, "/genloader/dumps/blocks/" + entry.getKey() + ".json");
 				blockDump.getParentFile().mkdirs();
 				blockDump.createNewFile();
-				GenLoader.log.log(Level.INFO, "Created File: " + entry.getKey() + ".json");
+				GenLoaderAPI.log.log(Level.INFO, "Created File: " + entry.getKey() + ".json");
 				String stream = gson.toJson(entry.getValue());
 
 				FileWriter writer = new FileWriter(blockDump, false);

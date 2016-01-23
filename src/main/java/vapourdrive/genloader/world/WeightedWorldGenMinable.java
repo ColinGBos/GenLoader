@@ -11,7 +11,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
-import vapourdrive.genloader.api.WeightedBlockState;
+import vapourdrive.genloader.api.serializeable.WeightedBlockState;
 import vapourdrive.genloader.utils.IndexedWeightedBlockState;
 
 import com.google.common.base.Predicate;
@@ -104,6 +104,11 @@ public class WeightedWorldGenMinable extends WorldGenerator
 
 	private boolean setBlock(World worldIn, Random rand, BlockPos blockpos)
 	{
+		if(indexedBlocks.size() == 1)
+		{
+			return worldIn.setBlockState(blockpos, indexedBlocks.get(0).getBlockState(), 2);
+		}
+		
 		int number = rand.nextInt(totalWeight);
 		Iterator<IndexedWeightedBlockState> iterator = indexedBlocks.iterator();
 		while (iterator.hasNext())

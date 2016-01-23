@@ -1,8 +1,8 @@
-package vapourdrive.genloader.api;
+package vapourdrive.genloader.api.serializeable;
 
 import java.util.HashMap;
 
-import vapourdrive.genloader.utils.BlockUtils;
+import vapourdrive.genloader.api.utils.BlockUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraftforge.fml.common.registry.GameData;
 

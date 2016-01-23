@@ -9,10 +9,6 @@ import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import vapourdrive.genloader.proxies.CommonProxy;
 
 @Mod(modid = ModInfo.ModID, version = ModInfo.Version)
@@ -23,7 +19,6 @@ public class GenLoader
 	
 	@SidedProxy(clientSide = "vapourdrive.genloader.proxies.ClientProxy", serverSide = "vapourdrive.genloader.proxies.CommonProxy")
 	public static CommonProxy proxy;
-	public static final Logger log = LogManager.getLogger(ModInfo.ModID);
 	
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)

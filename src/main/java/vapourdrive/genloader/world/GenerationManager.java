@@ -10,13 +10,19 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import net.minecraft.block.BlockStone;
+import net.minecraft.init.Blocks;
+import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.BiomeDictionary.Type;
+
 import org.apache.logging.log4j.Level;
 
-import vapourdrive.genloader.GenLoader;
+import scala.actors.threadpool.Arrays;
 import vapourdrive.genloader.api.GenLoaderAPI;
-import vapourdrive.genloader.api.Generation;
-import vapourdrive.genloader.api.ParsableBlockState;
-import vapourdrive.genloader.api.WeightedBlockState;
+import vapourdrive.genloader.api.generation.EnumGenerationType;
+import vapourdrive.genloader.api.generation.Generation;
+import vapourdrive.genloader.api.serializeable.ParsableBlockState;
+import vapourdrive.genloader.api.serializeable.WeightedBlockState;
 import vapourdrive.genloader.utils.ParsableBlockStateDeserializer;
 import vapourdrive.genloader.utils.ParsableBlockStateSerializer;
 import vapourdrive.genloader.utils.WeightedBlockStateDeserializer;
@@ -34,27 +40,26 @@ public class GenerationManager
 
 	public GenerationManager(File configPath)
 	{
-		sortGenerators();
+		sortGenerators(catGenerators, GenLoaderAPI.getGeneratorList().iterator());
 		dumpGenerators(configPath);
+		handleVanillaDump(configPath);
 		buildFinalGenerators(configPath);
 	}
 
-	private void sortGenerators()
+	private void sortGenerators(HashMap<String, ArrayList<Generation>> genListMap, Iterator<Generation> iterator)
 	{
-		Iterator<Generation> iterator = GenLoaderAPI.generators.iterator();
-
 		while (iterator.hasNext())
 		{
 			Generation gen = iterator.next();
-			if (catGenerators.containsKey(gen.getOwner()))
+			if (genListMap.containsKey(gen.getOwner()))
 			{
-				catGenerators.get(gen.getOwner()).add(gen);
+				genListMap.get(gen.getOwner()).add(gen);
 			}
 			else
 			{
 				ArrayList<Generation> initialArray = new ArrayList<Generation>();
 				initialArray.add(gen);
-				catGenerators.put(gen.getOwner(), initialArray);
+				genListMap.put(gen.getOwner(), initialArray);
 			}
 		}
 
@@ -69,17 +74,22 @@ public class GenerationManager
 		
 		Gson gson = gsonBuilder.serializeNulls().setPrettyPrinting().disableHtmlEscaping().create();
 
-		Iterator<Entry<String, ArrayList<Generation>>> iterator = catGenerators.entrySet().iterator();
+		dumpList(gson, configPath, catGenerators, ".json");
+	}
+	
+	public void dumpList(Gson gson, File configPath, HashMap<String, ArrayList<Generation>> genListMap, String suffix)
+	{
+		Iterator<Entry<String, ArrayList<Generation>>> iterator = genListMap.entrySet().iterator();
 		while (iterator.hasNext())
 		{
 			Entry<String, ArrayList<Generation>> entry = iterator.next();
 			try
 			{
-				File file = new File(configPath, "/genloader/world/" + entry.getKey() + ".json");
+				File file = new File(configPath, "/genloader/world/" + entry.getKey() + suffix);
 				file.getParentFile().mkdirs();
 				if (file.createNewFile())
 				{
-					GenLoader.log.log(Level.INFO, "Created File: " + entry.getKey() + ".json");
+					GenLoaderAPI.log.log(Level.INFO, "Created File: " + entry.getKey() + suffix);
 					String stream = gson.toJson(entry.getValue());
 
 					FileWriter writer = new FileWriter(file, true);
@@ -131,5 +141,42 @@ public class GenerationManager
 				}
 			}
 		}
+	}
+	
+	private void handleVanillaDump(File configPath)
+	{
+		HashMap<String, ArrayList<Generation>> catVanilla = new HashMap<String, ArrayList<Generation>>();
+		ArrayList<Generation> generators = buildVanillaGenerators();
+		sortGenerators(catVanilla, generators.iterator());
+		
+		gsonBuilder.registerTypeAdapter(WeightedBlockState.class, new WeightedBlockStateSerializer());
+		gsonBuilder.registerTypeAdapter(WeightedBlockState.class, new WeightedBlockStateDeserializer());
+		gsonBuilder.registerTypeAdapter(ParsableBlockState.class, new ParsableBlockStateSerializer());
+		gsonBuilder.registerTypeAdapter(ParsableBlockState.class, new ParsableBlockStateDeserializer());
+		
+		Gson gson = gsonBuilder.serializeNulls().setPrettyPrinting().disableHtmlEscaping().create();
+		
+		dumpList(gson, configPath, catVanilla, ".json.dis");
+	}
+
+	private ArrayList<Generation> buildVanillaGenerators()
+	{
+		ArrayList<Generation> generators = new ArrayList<Generation>();
+		generators.add(new Generation("VanillaOres", EnumGenerationType.WEIGHTEDSTANDARDCLUSTER, 20, 0, 128, 17, new ArrayList<Integer>(Arrays.asList(new Integer[]{0})), null, null, new WeightedBlockState[]{new WeightedBlockState(10, Blocks.coal_ore.getDefaultState())}, new ParsableBlockState(Blocks.stone.getDefaultState())));
+		generators.add(new Generation("VanillaOres", EnumGenerationType.WEIGHTEDSTANDARDCLUSTER, 20, 0, 64, 9, new ArrayList<Integer>(Arrays.asList(new Integer[]{0})), null, null, new WeightedBlockState[]{new WeightedBlockState(10, Blocks.iron_ore.getDefaultState())}, new ParsableBlockState(Blocks.stone.getDefaultState())));
+		generators.add(new Generation("VanillaOres", EnumGenerationType.WEIGHTEDSTANDARDCLUSTER, 2, 0, 32, 9, new ArrayList<Integer>(Arrays.asList(new Integer[]{0})), null, null, new WeightedBlockState[]{new WeightedBlockState(10, Blocks.gold_ore.getDefaultState())}, new ParsableBlockState(Blocks.stone.getDefaultState())));
+		generators.add(new Generation("VanillaOres", EnumGenerationType.WEIGHTEDSTANDARDCLUSTER, 8, 0, 16, 8, new ArrayList<Integer>(Arrays.asList(new Integer[]{0})), null, null, new WeightedBlockState[]{new WeightedBlockState(10, Blocks.redstone_ore.getDefaultState())}, new ParsableBlockState(Blocks.stone.getDefaultState())));
+		generators.add(new Generation("VanillaOres", EnumGenerationType.WEIGHTEDSTANDARDCLUSTER, 6, 0, 32, 1, new ArrayList<Integer>(Arrays.asList(new Integer[]{0})), null, null, new WeightedBlockState[]{new WeightedBlockState(10, Blocks.emerald_ore.getDefaultState())}, new ParsableBlockState(Blocks.stone.getDefaultState())));
+		generators.add(new Generation("VanillaOres", EnumGenerationType.WEIGHTEDSTANDARDCLUSTER, 1, 5, 30, 7, new ArrayList<Integer>(Arrays.asList(new Integer[]{0})), null, null, new WeightedBlockState[]{new WeightedBlockState(10, Blocks.lapis_ore.getDefaultState())}, new ParsableBlockState(Blocks.stone.getDefaultState())));
+		generators.add(new Generation("VanillaOres", EnumGenerationType.WEIGHTEDSTANDARDCLUSTER, 1, 0, 16, 8, new ArrayList<Integer>(Arrays.asList(new Integer[]{0})), new ArrayList<Type>(Arrays.asList(new Type[]{BiomeDictionary.Type.MOUNTAIN})), null, new WeightedBlockState[]{new WeightedBlockState(10, Blocks.diamond_ore.getDefaultState())}, new ParsableBlockState(Blocks.stone.getDefaultState())));
+		generators.add(new Generation("VanillaOres", EnumGenerationType.WEIGHTEDSTANDARDCLUSTER, 16, 0, 256, 14, new ArrayList<Integer>(Arrays.asList(new Integer[]{-1})), null, null, new WeightedBlockState[]{new WeightedBlockState(10, Blocks.quartz_ore.getDefaultState())}, new ParsableBlockState(Blocks.netherrack.getDefaultState())));
+
+		generators.add(new Generation("VanillaJunk", EnumGenerationType.WEIGHTEDSTANDARDCLUSTER, 10, 0, 256, 33, new ArrayList<Integer>(Arrays.asList(new Integer[]{0})), null, null, new WeightedBlockState[]{new WeightedBlockState(10, Blocks.dirt.getDefaultState())}, new ParsableBlockState(Blocks.stone.getDefaultState())));
+		generators.add(new Generation("VanillaJunk", EnumGenerationType.WEIGHTEDSTANDARDCLUSTER, 8, 0, 256, 33, new ArrayList<Integer>(Arrays.asList(new Integer[]{0})), null, null, new WeightedBlockState[]{new WeightedBlockState(10, Blocks.gravel.getDefaultState())}, new ParsableBlockState(Blocks.stone.getDefaultState())));
+		generators.add(new Generation("VanillaJunk", EnumGenerationType.WEIGHTEDSTANDARDCLUSTER, 10, 0, 80, 33, new ArrayList<Integer>(Arrays.asList(new Integer[]{0})), null, null, new WeightedBlockState[]{new WeightedBlockState(10, Blocks.stone.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.ANDESITE))}, new ParsableBlockState(Blocks.stone.getDefaultState())));
+		generators.add(new Generation("VanillaJunk", EnumGenerationType.WEIGHTEDSTANDARDCLUSTER, 10, 0, 80, 33, new ArrayList<Integer>(Arrays.asList(new Integer[]{0})), null, null, new WeightedBlockState[]{new WeightedBlockState(10, Blocks.stone.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.DIORITE))}, new ParsableBlockState(Blocks.stone.getDefaultState())));
+		generators.add(new Generation("VanillaJunk", EnumGenerationType.WEIGHTEDSTANDARDCLUSTER, 10, 0, 80, 33, new ArrayList<Integer>(Arrays.asList(new Integer[]{0})), null, null, new WeightedBlockState[]{new WeightedBlockState(10, Blocks.stone.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.GRANITE))}, new ParsableBlockState(Blocks.stone.getDefaultState())));
+
+		return generators;
 	}
 }

@@ -8,14 +8,15 @@ import java.util.Random;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.fml.common.IWorldGenerator;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import vapourdrive.genloader.api.EnumGenerationType;
-import vapourdrive.genloader.api.Generation;
+import vapourdrive.genloader.api.generation.EnumGenerationType;
+import vapourdrive.genloader.api.generation.Generation;
 import vapourdrive.genloader.utils.IBlockStateHelper;
 
 public class GL_WorldGenerator implements IWorldGenerator
@@ -32,9 +33,10 @@ public class GL_WorldGenerator implements IWorldGenerator
 		while (iterator.hasNext())
 		{
 			Generation generation = iterator.next();
-			if (generation.getDimensions().contains(world.provider.getDimensionName()))
+			if (generation.getDimensions().contains(world.provider.getDimensionId()))
 			{
-				if (generation.getBiomeTypes().isEmpty() || isBiomeofType(world, chunkX, chunkZ, generation.getBiomeTypes()))
+				if (noSetBiomeFilter(generation)
+						|| isBiomeValid(world, chunkX, chunkZ, generation.getBiomeTypes(), generation.getBiomeIDs()))
 				{
 					if (generation.getGeneratorType() == EnumGenerationType.WEIGHTEDSTANDARDCLUSTER)
 					{
@@ -49,11 +51,27 @@ public class GL_WorldGenerator implements IWorldGenerator
 		}
 	}
 
-	private boolean isBiomeofType(World world, int chunkX, int chunkZ, ArrayList<Type> biomes)
+	private boolean noSetBiomeFilter(Generation generation)
 	{
-		for (Type type : BiomeDictionary.getTypesForBiome(world.getBiomeGenForCoords(new BlockPos(chunkX * 16, 0, chunkZ * 16))))
+		return generation.getBiomeTypes() == null && generation.getBiomeIDs() == null;
+	}
+
+	private boolean isBiomeValid(World world, int chunkX, int chunkZ, ArrayList<Type> biomeTypes, ArrayList<Integer> biomeIDs)
+	{
+		if (biomeTypes != null)
 		{
-			if (biomes.contains(type))
+			for (Type type : BiomeDictionary.getTypesForBiome(world.getBiomeGenForCoords(new BlockPos(chunkX * 16, 0, chunkZ * 16))))
+			{
+				if (biomeTypes.contains(type))
+				{
+					return true;
+				}
+			}
+		}
+		if (biomeIDs != null)
+		{
+			BiomeGenBase biome = world.getBiomeGenForCoords(new BlockPos(chunkX * 16, 0, chunkZ * 16));
+			if (biomeIDs.contains(biome.biomeID))
 			{
 				return true;
 			}

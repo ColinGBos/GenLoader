@@ -1,7 +1,9 @@
-package vapourdrive.genloader.api;
+package vapourdrive.genloader.api.generation;
 
 import java.util.ArrayList;
 
+import vapourdrive.genloader.api.serializeable.ParsableBlockState;
+import vapourdrive.genloader.api.serializeable.WeightedBlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraftforge.common.BiomeDictionary.Type;
 
@@ -13,12 +15,13 @@ public class Generation
 	private final int minY;
 	private final int maxY;
 	private final int size;
-	private final ArrayList<String> dimensions;
+	private final ArrayList<Integer> dimensions;
 	private final ArrayList<Type> biomeTypes;
+	private final ArrayList<Integer> biomeIDs;
 	private final WeightedBlockState[] weightedBlocks;
 	private final ParsableBlockState blockToReplace;
 	
-	public Generation(String Category, EnumGenerationType GeneratorType, int Frequency, int MinY, int MaxY, int Size, ArrayList<String> Dimensions, ArrayList<Type> Biomes, WeightedBlockState[] WeightedBlocks, ParsableBlockState BlockToReplace)
+	public Generation(String Category, EnumGenerationType GeneratorType, int Frequency, int MinY, int MaxY, int Size, ArrayList<Integer> Dimensions, ArrayList<Type> BiomeTypes, ArrayList<Integer> BiomeIDs, WeightedBlockState[] WeightedBlocks, ParsableBlockState BlockToReplace)
 	{
 		this.category = Category;
 		this.generatorType = GeneratorType;
@@ -28,7 +31,8 @@ public class Generation
 		this.size = Size;
 		this.dimensions = Dimensions;
 		this.weightedBlocks = WeightedBlocks;
-		this.biomeTypes = Biomes;
+		this.biomeTypes = BiomeTypes;
+		this.biomeIDs = BiomeIDs;
 		this.blockToReplace = BlockToReplace;
 	}
 	
@@ -62,7 +66,7 @@ public class Generation
 		return this.size;
 	}
 	
-	public ArrayList<String> getDimensions()
+	public ArrayList<Integer> getDimensions()
 	{
 		return this.dimensions;
 	}
@@ -70,6 +74,11 @@ public class Generation
 	public ArrayList<Type> getBiomeTypes()
 	{
 		return this.biomeTypes;
+	}
+	
+	public ArrayList<Integer> getBiomeIDs()
+	{
+		return this.biomeIDs;
 	}
 	
 	public WeightedBlockState[] getWeightedBlocks()

@@ -2,19 +2,21 @@ package vapourdrive.genloader.proxies;
 
 import java.io.File;
 
-import org.apache.logging.log4j.Level;
-
-import vapourdrive.genloader.GenLoader;
-import vapourdrive.genloader.api.GenLoaderAPI;
-import vapourdrive.genloader.commands.ClearBlockCommand;
-import vapourdrive.genloader.utils.BlockDump;
-import vapourdrive.genloader.world.GenerationManager;
-import vapourdrive.genloader.world.GL_WorldGenerator;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+
+import org.apache.logging.log4j.Level;
+
+import vapourdrive.genloader.api.GenLoaderAPI;
+import vapourdrive.genloader.commands.ClearBlockCommand;
+import vapourdrive.genloader.config.ConfigManager;
+import vapourdrive.genloader.events.EventManager;
+import vapourdrive.genloader.utils.BlockDump;
+import vapourdrive.genloader.world.GL_WorldGenerator;
+import vapourdrive.genloader.world.GenerationManager;
 
 public class CommonProxy
 {
@@ -22,15 +24,16 @@ public class CommonProxy
 	
 	public void preInit(FMLPreInitializationEvent event)
 	{
-		GenLoader.log.log(Level.INFO, "Staring PreInit");
+		GenLoaderAPI.log.log(Level.INFO, "Staring PreInit");
 		ConfigPath = event.getModConfigurationDirectory();
 		new GenLoaderAPI();
+		ConfigManager.preInit(ConfigPath);
 	}
 
 	public void init(FMLInitializationEvent event)
 	{
-		GenLoader.log.log(Level.INFO, "Staring Init");
-		
+		GenLoaderAPI.log.log(Level.INFO, "Staring Init");
+		EventManager.init();
 	}
 
 	public void postInit(FMLPostInitializationEvent event)

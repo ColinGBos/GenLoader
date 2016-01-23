@@ -1,4 +1,4 @@
-package vapourdrive.genloader.utils;
+package vapourdrive.genloader.api.utils;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.registry.GameData;
 
 import org.apache.logging.log4j.Level;
 
-import vapourdrive.genloader.GenLoader;
+import vapourdrive.genloader.api.GenLoaderAPI;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -48,7 +48,7 @@ public class BlockUtils
 			}
 		}
 		
-		GenLoader.log.log(Level.WARN, "Block: *" + block + "* with properties: *" + properties + "* was not found, resorting to block's default state");
+		GenLoaderAPI.log.log(Level.WARN, "Block: *" + block + "* with properties: *" + properties + "* was not found, resorting to block's default state");
 		return foundBlock.getDefaultState();
 	}
 	
