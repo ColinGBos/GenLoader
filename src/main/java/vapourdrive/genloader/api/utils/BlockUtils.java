@@ -19,6 +19,7 @@ import com.google.common.collect.ImmutableMap;
 
 public class BlockUtils
 {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static IBlockState createState(String block, HashMap<String, String> properties)
 	{
 		Block foundBlock = GameData.getBlockRegistry().getObject(new ResourceLocation(block));
@@ -52,6 +53,7 @@ public class BlockUtils
 		return foundBlock.getDefaultState();
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static HashMap<String, String> generateProperties(IBlockState state)
 	{
 		ImmutableMap<IProperty, Comparable> stateProps = state.getProperties();

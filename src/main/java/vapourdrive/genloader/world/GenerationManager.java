@@ -167,6 +167,7 @@ public class GenerationManager
 		dumpList(gson, configPath, catVanilla, suffix);
 	}
 
+	@SuppressWarnings("unchecked")
 	private ArrayList<Generation> buildVanillaGenerators()
 	{
 		ArrayList<Generation> generators = new ArrayList<Generation>();

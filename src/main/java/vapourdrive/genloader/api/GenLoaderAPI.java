@@ -85,6 +85,7 @@ public class GenLoaderAPI
 	 * @param size the approximate max size of the generator (number on blocks in a cluster)
 	 * @param weightedBlockStates an array of weighted blocks, determines the blocks weight for it's occurrence in the generation
 	 */
+	@SuppressWarnings("unchecked")
 	public static void addGeneration(String category, EnumGenerationType genType, int frequency, int minY, int maxY, int size, WeightedBlockState[] weightedBlockStates)
 	{
 		generators.add(new Generation(category, EnumGenerationPriority.LATER, genType, frequency, minY, maxY, size, new ArrayList<Integer>(Arrays.asList(new Integer[]{0})), null, null, weightedBlockStates, new ParsableBlockState(Blocks.stone.getDefaultState())));
