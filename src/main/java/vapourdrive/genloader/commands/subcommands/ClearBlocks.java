@@ -1,91 +1,57 @@
-package vapourdrive.genloader.commands;
+package vapourdrive.genloader.commands.subcommands;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.common.registry.GameData;
-
-import org.apache.logging.log4j.Level;
-
 import vapourdrive.genloader.api.GenLoaderAPI;
 import vapourdrive.genloader.api.utils.BlockUtils;
 
-public class ClearBlockCommand implements ICommand
+public class ClearBlocks
 {
-	@Override
-	public int compareTo(ICommand o)
-	{
-		return 0;
-	}
 
-	@Override
-	public String getCommandName()
+	public static void processCommand(ICommandSender sender, String[] args) throws CommandException
 	{
-		return "GL_ClearBlock";
-	}
-
-	@Override
-	public String getCommandUsage(ICommandSender sender)
-	{
-		return "Gl_ClearBlocks <text>";
-	}
-
-	@Override
-	public List<String> getCommandAliases()
-	{
-		ArrayList<String> aliases = new ArrayList<String>();
-		aliases.add(getCommandName());
-		return aliases;
-	}
-
-	@Override
-	public void processCommand(ICommandSender sender, String[] args) throws CommandException
-	{
-		if (args.length < 5)
+		if (args.length < 6)
 		{
 			sender.addChatMessage(new ChatComponentTranslation("genloader.notenoughargs"));
 			return;
 		}
-		int CXmin = CommandBase.parseInt(args[0]);
-		int CXmax = CommandBase.parseInt(args[1]);
-		int CZmin = CommandBase.parseInt(args[2]);
-		int CZmax = CommandBase.parseInt(args[3]);
-		
-		if((CXmax - CXmin) * (CZmax - CZmin) > 25)
+		int CXmin = CommandBase.parseInt(args[1]);
+		int CXmax = CommandBase.parseInt(args[2]);
+		int CZmin = CommandBase.parseInt(args[3]);
+		int CZmax = CommandBase.parseInt(args[4]);
+
+		if ((CXmax - CXmin) * (CZmax - CZmin) > 25)
 		{
 			sender.addChatMessage(new ChatComponentTranslation("genloader.areatoolarge"));
 			return;
 		}
 
-		String toRemove = args[4];
+		String toRemove = args[5];
 		Block block = null;
 		IBlockState state = null;
-		ArrayList<Block> junkArray = new ArrayList<Block>();
 
 		boolean haveJunk = false;
 
 		if (!toRemove.contentEquals("junk"))
 		{
-			if (args.length == 5)
+			if (args.length == 6)
 			{
 				block = GameData.getBlockRegistry().getObject(new ResourceLocation(toRemove));
 			}
 			HashMap<String, String> properties = new HashMap<String, String>();
-			for (int i = 5; i < args.length; i = i + 2)
+			for (int i = 6; i < args.length; i = i + 2)
 			{
 				if (args[i] != null && args[i + 1] != null)
 				{
@@ -98,21 +64,6 @@ public class ClearBlockCommand implements ICommand
 		if (toRemove.contentEquals("junk"))
 		{
 			haveJunk = true;
-			GenLoaderAPI.log.log(Level.INFO, "Preparing to remove junk");
-			junkArray.add(Blocks.stone);
-			junkArray.add(Blocks.dirt);
-			junkArray.add(Blocks.gravel);
-			junkArray.add(Blocks.grass);
-			junkArray.add(Blocks.cobblestone);
-			junkArray.add(Blocks.lava);
-			junkArray.add(Blocks.water);
-			junkArray.add(Blocks.flowing_lava);
-			junkArray.add(Blocks.flowing_water);
-			junkArray.add(Blocks.sandstone);
-			junkArray.add(Blocks.log);
-			junkArray.add(Blocks.log2);
-			junkArray.add(Blocks.leaves);
-			junkArray.add(Blocks.leaves2);
 		}
 
 		for (int i = CXmin; i <= CXmax; i++)
@@ -127,7 +78,7 @@ public class ClearBlockCommand implements ICommand
 						int maxheight = world.getChunkFromBlockCoords(new BlockPos(k, 0, l)).getTopFilledSegment() + 16;
 						for (int m = 0; m < maxheight; m++)
 						{
-							if (haveJunk && junkArray.contains(world.getBlockState(new BlockPos(k, m, l)).getBlock()))
+							if (haveJunk && !GenLoaderAPI.getValuableBlockStates().contains(world.getBlockState(new BlockPos(k, m, l))))
 							{
 								world.setBlockToAir(new BlockPos(k, m, l));
 							}
@@ -144,25 +95,9 @@ public class ClearBlockCommand implements ICommand
 				}
 			}
 		}
-
 	}
-
-	@Override
-	public boolean canCommandSenderUseCommand(ICommandSender sender)
-	{
-		if (sender.getCommandSenderEntity() instanceof EntityPlayer)
-		{
-			EntityPlayer player = (EntityPlayer) sender.getCommandSenderEntity();
-			if (player.capabilities.isCreativeMode)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public List<String> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos)
+	
+	public static ArrayList<String> addTabCompletionOptions(ICommandSender sender, String[] args)
 	{
 		Chunk chunk = sender.getEntityWorld().getChunkFromBlockCoords(sender.getPosition());
 		ArrayList<String> argsList = new ArrayList<String>();
@@ -170,12 +105,6 @@ public class ClearBlockCommand implements ICommand
 				+ String.valueOf(chunk.zPosition - 2) + " " + String.valueOf(chunk.zPosition + 2) + " junk");
 
 		return argsList;
-	}
-
-	@Override
-	public boolean isUsernameIndex(String[] args, int index)
-	{
-		return false;
 	}
 
 }

@@ -11,11 +11,12 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import org.apache.logging.log4j.Level;
 
 import vapourdrive.genloader.api.GenLoaderAPI;
-import vapourdrive.genloader.commands.ClearBlockCommand;
-import vapourdrive.genloader.commands.CountBlockCommand;
+import vapourdrive.genloader.commands.GenLoaderCommand;
 import vapourdrive.genloader.config.ConfigManager;
 import vapourdrive.genloader.events.EventManager;
 import vapourdrive.genloader.utils.BlockDump;
+import vapourdrive.genloader.utils.GsonHelper;
+import vapourdrive.genloader.vanilla.VanillaModule;
 import vapourdrive.genloader.world.GL_WorldGenerator;
 import vapourdrive.genloader.world.GenerationManager;
 
@@ -28,6 +29,7 @@ public class CommonProxy
 		GenLoaderAPI.log.log(Level.INFO, "Staring PreInit");
 		ConfigPath = event.getModConfigurationDirectory();
 		new GenLoaderAPI();
+		new GsonHelper();
 		ConfigManager.preInit(ConfigPath);
 	}
 
@@ -35,6 +37,7 @@ public class CommonProxy
 	{
 		GenLoaderAPI.log.log(Level.INFO, "Staring Init");
 		EventManager.init();
+		new VanillaModule();
 	}
 
 	public void postInit(FMLPostInitializationEvent event)
@@ -50,8 +53,7 @@ public class CommonProxy
 
 	public void serverLoad(FMLServerStartingEvent event)
 	{
-		event.registerServerCommand(new ClearBlockCommand());
-		event.registerServerCommand(new CountBlockCommand());
+		event.registerServerCommand(new GenLoaderCommand());
 		
 	}
 

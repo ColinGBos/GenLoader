@@ -9,7 +9,7 @@ import net.minecraftforge.common.BiomeDictionary.Type;
 
 public class Generation
 {
-	private final String category;
+	private final GenerationCategory category;
 	private final EnumGenerationPriority generatorPriority;
 	private final EnumGenerationType generatorType;
 	private final int frequency;
@@ -22,7 +22,7 @@ public class Generation
 	private final WeightedBlockState[] weightedBlocks;
 	private final ParsableBlockState blockToReplace;
 	
-	public Generation(String Category, EnumGenerationPriority GeneratorPriority, EnumGenerationType GeneratorType, int Frequency, int MinY, int MaxY, int Size, ArrayList<Integer> Dimensions, ArrayList<Type> BiomeTypes, ArrayList<Integer> BiomeIDs, WeightedBlockState[] WeightedBlocks, ParsableBlockState BlockToReplace)
+	public Generation(GenerationCategory Category, EnumGenerationPriority GeneratorPriority, EnumGenerationType GeneratorType, int Frequency, int MinY, int MaxY, int Size, ArrayList<Integer> Dimensions, ArrayList<Type> BiomeTypes, ArrayList<Integer> BiomeIDs, WeightedBlockState[] WeightedBlocks, ParsableBlockState BlockToReplace)
 	{
 		this.category = Category;
 		this.generatorPriority = GeneratorPriority;
@@ -38,7 +38,7 @@ public class Generation
 		this.blockToReplace = BlockToReplace;
 	}
 	
-	public String getOwner()
+	public GenerationCategory getOwner()
 	{
 		return this.category;
 	}
