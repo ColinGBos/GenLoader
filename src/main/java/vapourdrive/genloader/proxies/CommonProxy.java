@@ -15,7 +15,7 @@ import vapourdrive.genloader.commands.GenLoaderCommand;
 import vapourdrive.genloader.config.ConfigManager;
 import vapourdrive.genloader.events.EventManager;
 import vapourdrive.genloader.utils.BlockDump;
-import vapourdrive.genloader.utils.GsonHelper;
+import vapourdrive.genloader.utils.json.GsonHelper;
 import vapourdrive.genloader.vanilla.VanillaModule;
 import vapourdrive.genloader.world.GL_WorldGenerator;
 import vapourdrive.genloader.world.GenerationManager;

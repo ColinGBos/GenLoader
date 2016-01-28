@@ -14,9 +14,10 @@ import org.apache.logging.log4j.Level;
 
 import vapourdrive.genloader.api.GenLoaderAPI;
 import vapourdrive.genloader.api.generation.Generation;
-import vapourdrive.genloader.api.generation.GenerationCategory;
+import vapourdrive.genloader.api.generation.IGeneration;
+import vapourdrive.genloader.api.generation.IGenerationCategory;
 import vapourdrive.genloader.utils.GeneratorComarator;
-import vapourdrive.genloader.utils.GsonHelper;
+import vapourdrive.genloader.utils.json.GsonHelper;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -24,7 +25,7 @@ import com.google.gson.reflect.TypeToken;
 public class GenerationManager
 {
 	public static ArrayList<Generation> finalGenerators = new ArrayList<Generation>();
-	public static HashMap<GenerationCategory, ArrayList<Generation>> catGenerators = new HashMap<GenerationCategory, ArrayList<Generation>>();
+	public static HashMap<IGenerationCategory, ArrayList<IGeneration>> catGenerators = new HashMap<IGenerationCategory, ArrayList<IGeneration>>();
 
 	public GenerationManager(File configPath)
 	{
@@ -34,18 +35,18 @@ public class GenerationManager
 		finalGenerators.sort(new GeneratorComarator());	
 	}
 
-	private void sortGenerators(HashMap<GenerationCategory, ArrayList<Generation>> genListMap, Iterator<Generation> iterator)
+	private void sortGenerators(HashMap<IGenerationCategory, ArrayList<IGeneration>> genListMap, Iterator<IGeneration> iterator)
 	{
 		while (iterator.hasNext())
 		{
-			Generation gen = iterator.next();
+			IGeneration gen = iterator.next();
 			if (genListMap.containsKey(gen.getOwner()))
 			{
 				genListMap.get(gen.getOwner()).add(gen);
 			}
 			else
 			{
-				ArrayList<Generation> initialArray = new ArrayList<Generation>();
+				ArrayList<IGeneration> initialArray = new ArrayList<IGeneration>();
 				initialArray.add(gen);
 				genListMap.put(gen.getOwner(), initialArray);
 			}
@@ -53,15 +54,15 @@ public class GenerationManager
 
 	}
 	
-	public void dumpList(Gson gson, File configPath, HashMap<GenerationCategory, ArrayList<Generation>> genListMap)
+	public void dumpList(Gson gson, File configPath, HashMap<IGenerationCategory, ArrayList<IGeneration>> catGenerators2)
 	{
-		Iterator<Entry<GenerationCategory, ArrayList<Generation>>> iterator = genListMap.entrySet().iterator();
+		Iterator<Entry<IGenerationCategory, ArrayList<IGeneration>>> iterator = catGenerators2.entrySet().iterator();
 		while (iterator.hasNext())
 		{
-			Entry<GenerationCategory, ArrayList<Generation>> entry = iterator.next();
+			Entry<IGenerationCategory, ArrayList<IGeneration>> entry = iterator.next();
 			try
 			{
-				GenerationCategory category = entry.getKey();
+				IGenerationCategory category = entry.getKey();
 				String suffix = category.getIsDefaultEnabled() ? ".json" : ".json.dis";
 				File file = new File(configPath, "/genloader/world/" + category.getCategoryName() + suffix);
 				file.getParentFile().mkdirs();

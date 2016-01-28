@@ -11,7 +11,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
-import vapourdrive.genloader.api.serializeable.WeightedBlockState;
+import vapourdrive.genloader.api.serializeable.IWeightedBlockState;
 import vapourdrive.genloader.utils.IndexedWeightedBlockState;
 
 import com.google.common.base.Predicate;
@@ -23,11 +23,11 @@ public class WeightedWorldGenMinable extends WorldGenerator
 	private final int numberOfBlocks;
 	private final Predicate<IBlockState> toReplace;
 	
-	public WeightedWorldGenMinable(WeightedBlockState[] WeightedBlocks, int NumberOfBlocks, Predicate<IBlockState> ToReplace)
+	public WeightedWorldGenMinable(IWeightedBlockState[] WeightedBlocks, int NumberOfBlocks, Predicate<IBlockState> ToReplace)
 	{
 		this.numberOfBlocks = NumberOfBlocks;
 		this.toReplace = ToReplace;
-		for (WeightedBlockState weightedBlock : WeightedBlocks)
+		for (IWeightedBlockState weightedBlock : WeightedBlocks)
 		{
 			int BlockWeight = weightedBlock.getWeight();
 			indexedBlocks.add(new IndexedWeightedBlockState(totalWeight, totalWeight + BlockWeight, weightedBlock.getState()));
@@ -35,7 +35,7 @@ public class WeightedWorldGenMinable extends WorldGenerator
 		}
 	}
 	
-	public WeightedWorldGenMinable(WeightedBlockState[] WeightedBlocks, int NumberOfBlocks)
+	public WeightedWorldGenMinable(IWeightedBlockState[] WeightedBlocks, int NumberOfBlocks)
 	{
 		this(WeightedBlocks, NumberOfBlocks, BlockHelper.forBlock(Blocks.stone));
 	}

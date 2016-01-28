@@ -1,6 +1,6 @@
 package vapourdrive.genloader.api.generation;
 
-public class GenerationCategory
+public class GenerationCategory implements IGenerationCategory
 {
 	private final String name;
 	private final boolean defaultEnabled;

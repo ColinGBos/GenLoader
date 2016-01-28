@@ -2,16 +2,17 @@ package vapourdrive.genloader.api.generation;
 
 import java.util.ArrayList;
 
-import vapourdrive.genloader.api.serializeable.ParsableBlockState;
-import vapourdrive.genloader.api.serializeable.WeightedBlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraftforge.common.BiomeDictionary.Type;
+import vapourdrive.genloader.api.serializeable.IParsableBlockState;
+import vapourdrive.genloader.api.serializeable.IWeightedBlockState;
 
-public class Generation
+public class Generation implements IGeneration
 {
-	private final GenerationCategory category;
+	private final IGenerationCategory category;
 	private final EnumGenerationPriority generatorPriority;
 	private final EnumGenerationType generatorType;
+	private final float chance;
 	private final int frequency;
 	private final int minY;
 	private final int maxY;
@@ -19,10 +20,10 @@ public class Generation
 	private final ArrayList<Integer> dimensions;
 	private final ArrayList<Type> biomeTypes;
 	private final ArrayList<Integer> biomeIDs;
-	private final WeightedBlockState[] weightedBlocks;
-	private final ParsableBlockState blockToReplace;
+	private final IWeightedBlockState[] weightedBlocks;
+	private final IParsableBlockState blockToReplace;
 	
-	public Generation(GenerationCategory Category, EnumGenerationPriority GeneratorPriority, EnumGenerationType GeneratorType, int Frequency, int MinY, int MaxY, int Size, ArrayList<Integer> Dimensions, ArrayList<Type> BiomeTypes, ArrayList<Integer> BiomeIDs, WeightedBlockState[] WeightedBlocks, ParsableBlockState BlockToReplace)
+	public Generation(IGenerationCategory Category, EnumGenerationPriority GeneratorPriority, EnumGenerationType GeneratorType, float Chance, int Frequency, int MinY, int MaxY, int Size, ArrayList<Integer> Dimensions, ArrayList<Type> BiomeTypes, ArrayList<Integer> BiomeIDs, IWeightedBlockState[] WeightedBlocks, IParsableBlockState BlockToReplace)
 	{
 		this.category = Category;
 		this.generatorPriority = GeneratorPriority;
@@ -36,9 +37,10 @@ public class Generation
 		this.biomeTypes = BiomeTypes;
 		this.biomeIDs = BiomeIDs;
 		this.blockToReplace = BlockToReplace;
+		this.chance = Chance;
 	}
 	
-	public GenerationCategory getOwner()
+	public IGenerationCategory getOwner()
 	{
 		return this.category;
 	}
@@ -51,6 +53,11 @@ public class Generation
 	public EnumGenerationType getGeneratorType()
 	{
 		return this.generatorType;
+	}
+	
+	public float getChance()
+	{
+		return this.chance;
 	}
 	
 	public int getFrequency()
@@ -88,7 +95,7 @@ public class Generation
 		return this.biomeIDs;
 	}
 	
-	public WeightedBlockState[] getWeightedBlocks()
+	public IWeightedBlockState[] getWeightedBlocks()
 	{
 		return this.weightedBlocks;
 	}

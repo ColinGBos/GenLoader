@@ -13,7 +13,7 @@ public class VanillaGenDisabler
 	{
 		EventType type = event.type;
 		if (type == EventType.COAL || type == EventType.DIAMOND || type == EventType.GOLD || type == EventType.IRON
-				|| type == EventType.LAPIS || type == EventType.QUARTZ || type == EventType.REDSTONE)
+				|| type == EventType.LAPIS || type == EventType.QUARTZ || type == EventType.REDSTONE || type == EventType.EMERALD)
 		{
 			if(ConfigOptions.disableVanillaOres)
 			{

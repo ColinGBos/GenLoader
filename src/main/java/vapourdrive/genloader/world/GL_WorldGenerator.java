@@ -33,27 +33,30 @@ public class GL_WorldGenerator implements IWorldGenerator
 		while (iterator.hasNext())
 		{
 			Generation generation = iterator.next();
-			if (generation.getDimensions().contains(world.provider.getDimensionId()))
+			if (random.nextFloat() < generation.getChance())
 			{
-				if (noSetBiomeFilter(generation)
-						|| isBiomeValid(world, chunkX, chunkZ, generation.getBiomeTypes(), generation.getBiomeIDs()))
+				if (generation.getDimensions().contains(world.provider.getDimensionId()))
 				{
-					IBlockState toReplace = generation.getBlockToReplace();
+					if (noSetBiomeFilter(generation)
+							|| isBiomeValid(world, chunkX, chunkZ, generation.getBiomeTypes(), generation.getBiomeIDs()))
+					{
+						IBlockState toReplace = generation.getBlockToReplace();
 
-					if (generation.getGeneratorType() == EnumGenerationType.STANDARDVARIABLECLUSTER)
-					{
-						WeightedWorldGenMinable generator = new WeightedWorldGenMinable(generation.getWeightedBlocks(),
-								generation.getSize(), new IBlockStateHelper(toReplace));
-						generateStandardOre(random, chunkX, chunkZ, world, generation.getFrequency(), generator, generation.getMinY(),
-								generation.getMaxY());
-					}
-					
-					else if (generation.getGeneratorType() == EnumGenerationType.WEIGHTEDVARIABLECLUSTER)
-					{
-						WeightedWorldGenMinable generator = new WeightedWorldGenMinable(generation.getWeightedBlocks(),
-								generation.getSize(), new IBlockStateHelper(toReplace));
-						generateWeightedOre(random, chunkX, chunkZ, world, generation.getFrequency(), generator, generation.getMinY(),
-								generation.getMaxY());
+						if (generation.getGeneratorType() == EnumGenerationType.STANDARDVARIABLECLUSTER)
+						{
+							WeightedWorldGenMinable generator = new WeightedWorldGenMinable(generation.getWeightedBlocks(),
+									generation.getSize(), new IBlockStateHelper(toReplace));
+							generateStandardOre(random, chunkX, chunkZ, world, generation.getFrequency(), generator, generation.getMinY(),
+									generation.getMaxY());
+						}
+
+						else if (generation.getGeneratorType() == EnumGenerationType.WEIGHTEDVARIABLECLUSTER)
+						{
+							WeightedWorldGenMinable generator = new WeightedWorldGenMinable(generation.getWeightedBlocks(),
+									generation.getSize(), new IBlockStateHelper(toReplace));
+							generateWeightedOre(random, chunkX, chunkZ, world, generation.getFrequency(), generator, generation.getMinY(),
+									generation.getMaxY());
+						}
 					}
 				}
 			}
@@ -100,13 +103,13 @@ public class GL_WorldGenerator implements IWorldGenerator
 			gen.generate(world, rand, new BlockPos(x, y, z));
 		}
 	}
-	
+
 	private void generateWeightedOre(Random rand, int chunkX, int chunkZ, World world, int iterations, WorldGenerator gen, int minY,
 			int maxY)
 	{
-		int centerHeight = (maxY + minY)/2;
+		int centerHeight = (maxY + minY) / 2;
 		int spread = (maxY - centerHeight);
-		
+
 		for (int i = 0; i < iterations; i++)
 		{
 			int x = chunkX * 16 + rand.nextInt(16);

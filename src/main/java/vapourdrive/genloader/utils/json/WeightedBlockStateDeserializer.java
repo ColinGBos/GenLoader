@@ -1,4 +1,4 @@
-package vapourdrive.genloader.utils;
+package vapourdrive.genloader.utils.json;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;

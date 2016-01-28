@@ -2,11 +2,11 @@ package vapourdrive.genloader.api.serializeable;
 
 import java.util.HashMap;
 
-import vapourdrive.genloader.api.utils.BlockUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraftforge.fml.common.registry.GameData;
+import vapourdrive.genloader.api.utils.BlockUtils;
 
-public class ParsableBlockState
+public class ParsableBlockState implements IParsableBlockState
 {
 	private final IBlockState state;
 	private final String block;

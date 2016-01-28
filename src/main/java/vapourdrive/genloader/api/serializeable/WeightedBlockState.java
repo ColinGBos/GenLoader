@@ -6,7 +6,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraftforge.fml.common.registry.GameData;
 import vapourdrive.genloader.api.utils.BlockUtils;
 
-public class WeightedBlockState
+public class WeightedBlockState implements IWeightedBlockState
 {
 	private final int weight;
 	private final String block;
