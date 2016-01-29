@@ -44,7 +44,7 @@ public class VanillaModule
 		ArrayList<Integer> overworld = new ArrayList<Integer>();
 		overworld.add(0);
 		ArrayList<Integer> nether = new ArrayList<Integer>();
-		overworld.add(-1);
+		nether.add(-1);
 		ArrayList<Type> mountainBiomes = new ArrayList<Type>();
 		mountainBiomes.add(BiomeDictionary.Type.MOUNTAIN);
 		

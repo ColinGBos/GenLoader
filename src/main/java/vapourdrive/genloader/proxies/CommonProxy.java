@@ -3,7 +3,6 @@ package vapourdrive.genloader.proxies;
 import java.io.File;
 
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
@@ -44,10 +43,6 @@ public class CommonProxy
 	{
 		new GenerationManager(ConfigPath);
 		new GL_WorldGenerator(ConfigPath);
-	}
-
-	public void fmlMapping(FMLModIdMappingEvent event)
-	{
 		BlockDump.init(ConfigPath);
 	}
 

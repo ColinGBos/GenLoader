@@ -57,9 +57,8 @@ public class BlockDump
 			Entry<String, ArrayList<BlockInfo>> entry = iterator.next();
 			try
 			{
-				File blockDump = new File(configPath, "/genloader/dumps/blocks/" + entry.getKey() + ".json");
+				File blockDump = new File(configPath + "/genloader/dumps/blocks/", entry.getKey() + ".json");
 				blockDump.getParentFile().mkdirs();
-				blockDump.createNewFile();
 				GenLoaderAPI.log.log(Level.INFO, "Created File: " + entry.getKey() + ".json");
 				String stream = gson.toJson(entry.getValue());
 
