@@ -8,6 +8,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ResourceLocation;
@@ -78,7 +79,7 @@ public class ClearBlocks
 						int maxheight = world.getChunkFromBlockCoords(new BlockPos(k, 0, l)).getTopFilledSegment() + 16;
 						for (int m = 0; m < maxheight; m++)
 						{
-							if (haveJunk && !GenLoaderAPI.getValuableBlockStates().contains(world.getBlockState(new BlockPos(k, m, l))))
+							if (haveJunk && world.getBlockState(new BlockPos(k, m, l)) != Blocks.bedrock.getDefaultState() && !GenLoaderAPI.getValuableBlockStates().contains(world.getBlockState(new BlockPos(k, m, l))))
 							{
 								world.setBlockToAir(new BlockPos(k, m, l));
 							}

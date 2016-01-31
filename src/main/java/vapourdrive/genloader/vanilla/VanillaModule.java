@@ -31,7 +31,10 @@ public class VanillaModule
 		GenLoaderAPI.addValuableBlock(Blocks.emerald_ore);
 		GenLoaderAPI.addValuableBlock(Blocks.diamond_ore);
 		GenLoaderAPI.addValuableBlock(Blocks.quartz_ore);
-		GenLoaderAPI.addValuableBlock(Blocks.bedrock);
+		GenLoaderAPI.addValuableBlock(Blocks.chest);
+		GenLoaderAPI.addValuableBlock(Blocks.mossy_cobblestone);
+		GenLoaderAPI.addValuableBlock(Blocks.cobblestone);
+		GenLoaderAPI.addValuableBlock(Blocks.mob_spawner);
 	}
 
 	private void buildVanillaGenerators()
@@ -57,6 +60,7 @@ public class VanillaModule
 		GenLoaderAPI.addGeneration(Ores, EnumGenerationPriority.LATE, EnumGenerationType.STANDARDVARIABLECLUSTER, 1.0f, 1, 0, 16, 8, overworld, null, null, new WeightedBlockState[]{new WeightedBlockState(10, Blocks.diamond_ore.getDefaultState())}, stone);
 		GenLoaderAPI.addGeneration(Ores, EnumGenerationPriority.LATER, EnumGenerationType.STANDARDVARIABLECLUSTER, 1.0f, 16, 0, 256, 14, nether, null, null, new WeightedBlockState[]{new WeightedBlockState(10, Blocks.quartz_ore.getDefaultState())}, netherrack);
 
+		GenLoaderAPI.addGeneration(Junk, EnumGenerationPriority.EARLIER, EnumGenerationType.STANDARDVARIABLECLUSTER, 1.0f, 8, 0, 256, 33, overworld, null, null, new WeightedBlockState[]{new WeightedBlockState(10, Blocks.dirt.getDefaultState())}, stone);
 		GenLoaderAPI.addGeneration(Junk, EnumGenerationPriority.EARLIER, EnumGenerationType.STANDARDVARIABLECLUSTER, 1.0f, 8, 0, 256, 33, overworld, null, null, new WeightedBlockState[]{new WeightedBlockState(10, Blocks.gravel.getDefaultState())}, stone);
 		GenLoaderAPI.addGeneration(Junk, EnumGenerationPriority.EARLIER, EnumGenerationType.STANDARDVARIABLECLUSTER, 1.0f, 10, 0, 80, 33, overworld, null, null, new WeightedBlockState[]{new WeightedBlockState(10, Blocks.stone.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.ANDESITE))}, stone);
 		GenLoaderAPI.addGeneration(Junk, EnumGenerationPriority.EARLIER, EnumGenerationType.STANDARDVARIABLECLUSTER, 1.0f, 10, 0, 80, 33, overworld, null, null, new WeightedBlockState[]{new WeightedBlockState(10, Blocks.stone.getDefaultState().withProperty(BlockStone.VARIANT, BlockStone.EnumType.DIORITE))}, stone);
