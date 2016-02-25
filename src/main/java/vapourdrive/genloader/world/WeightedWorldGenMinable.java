@@ -87,7 +87,7 @@ public class WeightedWorldGenMinable extends WorldGenerator
                                 {
                                     BlockPos blockpos = new BlockPos(l1, i2, j2);
 
-                                    if (worldIn.getBlockState(blockpos).getBlock().isReplaceableOreGen(worldIn, blockpos, this.toReplace))
+                                    if (worldIn.getBlockState(blockpos).getBlock().isReplaceableOreGen(worldIn, blockpos, this.toReplace) && (this.toReplace).apply(worldIn.getBlockState(blockpos)))
                                     {
                                         setBlock(worldIn, rand, blockpos);
                                     }
